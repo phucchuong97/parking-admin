@@ -3,12 +3,10 @@ import { Link as RouterLink, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import validate from 'validate.js';
 import { makeStyles } from '@material-ui/styles';
-import {
-  Grid,
-  Button,
-  TextField,
-  Typography
-} from '@material-ui/core';
+import { useSnackbar } from 'notistack';
+
+import { Grid, Button, TextField, Typography } from '@material-ui/core';
+import { login } from '../../api/auth';
 
 const schema = {
   email: {
@@ -21,7 +19,8 @@ const schema = {
   password: {
     presence: { allowEmpty: false, message: 'is required' },
     length: {
-      maximum: 128
+      maximum: 128,
+      minimum: 6
     }
   }
 };
@@ -131,6 +130,7 @@ const SignIn = props => {
     touched: {},
     errors: {}
   });
+  const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
     const errors = validate(formState.values, schema);
@@ -161,9 +161,21 @@ const SignIn = props => {
     }));
   };
 
-  const handleSignIn = event => {
+  const handleSignIn = async event => {
     event.preventDefault();
-    history.push('/');
+    login(formState.values)
+      .then(response => {
+        if (response.status == 200) {
+          const { user } = response.data;
+          localStorage.setItem('user', user);
+          enqueueSnackbar('Welcome ' + user.email, {variant:'success'});
+          history.push('/dashboard');
+        }
+      })
+      .catch(error => {
+        const errResponse = error.response;
+        enqueueSnackbar(errResponse.data.message, {variant:'error'});
+      });
   };
 
   const hasError = field =>
@@ -171,38 +183,22 @@ const SignIn = props => {
 
   return (
     <div className={classes.root}>
-      <Grid
-        className={classes.grid}
-        container
-      >
-        <Grid
-          className={classes.quoteContainer}
-          item
-          lg={5}
-        >
+      <Grid className={classes.grid} container>
+        <Grid className={classes.quoteContainer} item lg={5}>
           <div className={classes.quote}>
             <div className={classes.quoteInner} />
           </div>
         </Grid>
-        <Grid
-          className={classes.content}
-          item
-          lg={7}
-          xs={12}
-        >
+        <Grid className={classes.content} item lg={7} xs={12}>
           <div className={classes.content}>
             <div className={classes.contentBody}>
-              <form
-                className={classes.form}
-                onSubmit={handleSignIn}
-              >
+              <form className={classes.form} onSubmit={handleSignIn}>
                 <Typography
                   className={classes.title}
                   variant="h2"
-                  align="center"
-                >
+                  align="center">
                   Sign in
-                </Typography>            
+                </Typography>
                 <TextField
                   className={classes.textField}
                   error={hasError('email')}
@@ -239,10 +235,9 @@ const SignIn = props => {
                   size="large"
                   type="submit"
                   variant="contained"
-                >
+                  onClick={handleChange}>
                   Sign in now
                 </Button>
-              
               </form>
             </div>
           </div>
