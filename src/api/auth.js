@@ -1,5 +1,5 @@
 import axios from 'axios' ;
-const SERVER = 'http://35.187.241.117/';
+const SERVER = 'https://35.187.241.117/';
 const LOGIN_ROUTE = 'api/admin/login';
 
 const login = (formValue)=>{
