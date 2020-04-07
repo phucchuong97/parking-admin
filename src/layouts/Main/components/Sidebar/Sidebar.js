@@ -9,7 +9,6 @@ import Map from '@material-ui/icons/Map';
 import Parking from '@material-ui/icons/LocalParking';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import SettingsIcon from '@material-ui/icons/Settings';
-import LockOpenIcon from '@material-ui/icons/LockOpen';
 
 import { Profile, SidebarNav } from './components';
 

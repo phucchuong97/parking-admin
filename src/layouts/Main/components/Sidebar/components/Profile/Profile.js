@@ -29,10 +29,7 @@ const Profile = props => {
   const user = JSON.parse(localStorage.getItem('user'));
 
   return (
-    <div
-      {...rest}
-      className={clsx(classes.root, className)}
-    >
+    <div {...rest} className={clsx(classes.root, className)}>
       <Avatar
         alt="Person"
         className={classes.avatar}
@@ -40,13 +37,12 @@ const Profile = props => {
         src={'/images/avatars/avatar_7.png'}
         to="/settings"
       />
-      <Typography
-        className={classes.name}
-        variant="h4"
-      >
+      <Typography className={classes.name} variant="h4">
         {user.email}
       </Typography>
-      <Typography variant="body2">{user.role==2?'Amin':'Super Admin'}</Typography>
+      <Typography variant="body2">
+        {user.role === 2 ? 'Amin' : 'Super Admin'}
+      </Typography>
     </div>
   );
 };

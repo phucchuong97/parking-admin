@@ -41,7 +41,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const ParkingCard = props => {
-  const { className, parking: parking, ...rest } = props;
+  const { className, parking, ...rest } = props;
 
   const classes = useStyles();
 

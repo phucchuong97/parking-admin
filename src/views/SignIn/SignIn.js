@@ -164,7 +164,7 @@ const SignIn = props => {
     event.preventDefault();
     login(formState.values)
       .then(response => {
-        if (response.status == 200) {
+        if (response.status === 200) {
           const { user } = response.data;
           props.isLogedIn();
           localStorage.setItem('user', JSON.stringify(user));
