@@ -7,6 +7,8 @@ import { useSnackbar } from 'notistack';
 
 import { Grid, Button, TextField, Typography } from '@material-ui/core';
 import { login } from '../../api/auth';
+import {connect} from 'react-redux';
+import * as actions from '../../redux/actions';
 
 const schema = {
   email: {
@@ -121,9 +123,7 @@ const useStyles = makeStyles(theme => ({
 
 const SignIn = props => {
   const { history } = props;
-
   const classes = useStyles();
-
   const [formState, setFormState] = useState({
     isValid: false,
     values: {},
@@ -134,7 +134,6 @@ const SignIn = props => {
 
   useEffect(() => {
     const errors = validate(formState.values, schema);
-
     setFormState(formState => ({
       ...formState,
       isValid: errors ? false : true,
@@ -167,12 +166,14 @@ const SignIn = props => {
       .then(response => {
         if (response.status == 200) {
           const { user } = response.data;
-          localStorage.setItem('user', user);
+          props.isLogedIn();
+          localStorage.setItem('user', JSON.stringify(user));
           enqueueSnackbar('Welcome ' + user.email, {variant:'success'});
           history.push('/dashboard');
         }
       })
       .catch(error => {
+        console.log(error)
         const errResponse = error.response;
         enqueueSnackbar(errResponse.data.message, {variant:'error'});
       });
@@ -251,4 +252,8 @@ SignIn.propTypes = {
   history: PropTypes.object
 };
 
-export default withRouter(SignIn);
+const mapStateToProps = state => ({
+  isAuth: state.loginStatus
+});
+
+export default connect(mapStateToProps, actions)(withRouter(SignIn));

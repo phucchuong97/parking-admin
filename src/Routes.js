@@ -1,7 +1,7 @@
 import React from 'react';
 import { Switch, Redirect } from 'react-router-dom';
 
-import { RouteWithLayout , RouteWithoutLayout} from './components';
+import { RouteWithLayout , RouteWithoutLayout, PrivateRoute} from './components';
 import { Main as MainLayout, Minimal as MinimalLayout } from './layouts';
 
 import {
@@ -16,7 +16,7 @@ import {
   ParkingMap as ParkingMapView
 } from './views';
 
-const Routes = () => {
+const Routes = ({isAuth}) => {
   return (
     <Switch>
       <Redirect
@@ -24,37 +24,38 @@ const Routes = () => {
         from="/"
         to="/sign-in"
       />
-      <RouteWithLayout
+      <PrivateRoute
         component={DashboardView}
         exact
+        isAuth={isAuth}
         layout={MainLayout}
         path="/dashboard"
       />
-      <RouteWithLayout
+      <PrivateRoute
         component={UserListView}
         exact
         layout={MainLayout}
         path="/users"
       />
-      <RouteWithLayout
+      <PrivateRoute
         component={ParkingListView}
         exact
         layout={MainLayout}
         path="/parkings"
       />
-      <RouteWithLayout
+      <PrivateRoute
         component={ParkingMapView}
         exact
         layout={MainLayout}
         path="/parking-map"
       />
-      <RouteWithLayout
+      <PrivateRoute
         component={AccountView}
         exact
         layout={MainLayout}
         path="/account"
       />
-      <RouteWithLayout
+      <PrivateRoute
         component={SettingsView}
         exact
         layout={MainLayout}

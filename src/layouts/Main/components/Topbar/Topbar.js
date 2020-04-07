@@ -7,6 +7,8 @@ import { AppBar, Toolbar, Badge, Hidden, IconButton, Typography } from '@materia
 import MenuIcon from '@material-ui/icons/Menu';
 import NotificationsIcon from '@material-ui/icons/NotificationsOutlined';
 import InputIcon from '@material-ui/icons/Input';
+import {connect} from 'react-redux';
+import * as actions from '../../../../redux/actions';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -30,6 +32,11 @@ const Topbar = props => {
   const classes = useStyles();
 
   const [notifications] = useState([]);
+
+  const logout = ()=>{
+    localStorage.removeItem('user');
+    props.isLogedOut();
+  }
 
   return (
     <AppBar
@@ -59,6 +66,7 @@ const Topbar = props => {
           <IconButton
             className={classes.signOutButton}
             color="inherit"
+            onClick={logout}
           >
             <InputIcon />
           </IconButton>
@@ -81,4 +89,5 @@ Topbar.propTypes = {
   onSidebarOpen: PropTypes.func
 };
 
-export default Topbar;
+
+export default connect(null, actions)(Topbar);
