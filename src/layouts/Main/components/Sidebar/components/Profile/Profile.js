@@ -26,11 +26,7 @@ const Profile = props => {
 
   const classes = useStyles();
 
-  const user = {
-    name: 'NPC',
-    avatar: '/images/avatars/avatar_7.png',
-    bio: 'Super Admin'
-  };
+  const user = JSON.parse(localStorage.getItem('user'));
 
   return (
     <div
@@ -41,16 +37,16 @@ const Profile = props => {
         alt="Person"
         className={classes.avatar}
         component={RouterLink}
-        src={user.avatar}
+        src={'/images/avatars/avatar_7.png'}
         to="/settings"
       />
       <Typography
         className={classes.name}
         variant="h4"
       >
-        {user.name}
+        {user.email}
       </Typography>
-      <Typography variant="body2">{user.bio}</Typography>
+      <Typography variant="body2">{user.role==2?'Amin':'Super Admin'}</Typography>
     </div>
   );
 };
