@@ -5,7 +5,6 @@ import {connect} from 'react-redux';
 
 const PrivateRoute = props => {
   const { layout: Layout, component: Component,  ...rest } = props;
-  console.log('props', props)
   return (
     <Route
       {...rest}

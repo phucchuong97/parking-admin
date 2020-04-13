@@ -17,7 +17,7 @@ class ParkingMap extends Component {
       // Important! Always set the container height explicitly
       <div style={{ height: '90vh', width: '100%' }}>
         <GoogleMapReact
-          //bootstrapURLKeys={{ key: Key}}
+          bootstrapURLKeys={{ key: Key}}
           defaultCenter={this.props.center}
           defaultZoom={this.props.zoom}
           yesIWantToUseGoogleMapApiInternals

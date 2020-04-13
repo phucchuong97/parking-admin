@@ -3,11 +3,18 @@ import { Link as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
-import { AppBar, Toolbar, Badge, Hidden, IconButton, Typography } from '@material-ui/core';
+import {
+  AppBar,
+  Toolbar,
+  Badge,
+  Hidden,
+  IconButton,
+  Typography
+} from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import NotificationsIcon from '@material-ui/icons/NotificationsOutlined';
 import InputIcon from '@material-ui/icons/Input';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import * as actions from '../../../../redux/actions';
 
 const useStyles = makeStyles(theme => ({
@@ -20,36 +27,33 @@ const useStyles = makeStyles(theme => ({
   signOutButton: {
     marginLeft: theme.spacing(1)
   },
-  TextLogo:{
+  TextLogo: {
     marginTop: theme.spacing(1),
     color: theme.palette.white
   }
 }));
 
 const Topbar = props => {
-  const { className, onSidebarOpen, ...rest } = props;
+  const { className, onSidebarOpen } = props;
 
   const classes = useStyles();
 
   const [notifications] = useState([]);
 
-  const logout = ()=>{
+  const logout = () => {
     localStorage.removeItem('user');
     props.isLogedOut();
-  }
+  };
 
   return (
-    <AppBar
-      {...rest}
-      className={clsx(classes.root, className)}
-    >
+    <AppBar className={clsx(classes.root, className)}>
       <Toolbar>
         <RouterLink to="/dashboard">
-          <Typography 
-            className={[classes.title, classes.TextLogo]}
+          <Typography
+            className={clsx(classes.title, classes.TextLogo)}
             gutterBottom
             variant="h4">
-              Parking Sharing Web Admin
+            Parking Sharing Web Admin
           </Typography>
         </RouterLink>
         <div className={classes.flexGrow} />
@@ -58,24 +62,19 @@ const Topbar = props => {
             <Badge
               badgeContent={notifications.length}
               color="primary"
-              variant="dot"
-            >
+              variant="dot">
               <NotificationsIcon />
             </Badge>
           </IconButton>
           <IconButton
             className={classes.signOutButton}
             color="inherit"
-            onClick={logout}
-          >
+            onClick={logout}>
             <InputIcon />
           </IconButton>
         </Hidden>
         <Hidden lgUp>
-          <IconButton
-            color="inherit"
-            onClick={onSidebarOpen}
-          >
+          <IconButton color="inherit" onClick={onSidebarOpen}>
             <MenuIcon />
           </IconButton>
         </Hidden>
@@ -86,8 +85,8 @@ const Topbar = props => {
 
 Topbar.propTypes = {
   className: PropTypes.string,
+  isLogedOut: PropTypes.func,
   onSidebarOpen: PropTypes.func
 };
-
 
 export default connect(null, actions)(Topbar);
