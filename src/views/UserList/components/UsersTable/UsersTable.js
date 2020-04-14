@@ -105,7 +105,7 @@ const UsersTable = props => {
   };
 
   const updateUser = user => {
-    const index = users.findIndex(f => f._id == user._id);
+    const index = users.findIndex(f => f._id === user._id);
     users[index] = user;
     setUsers(users.map(f => f));
   };
@@ -116,7 +116,7 @@ const UsersTable = props => {
     blockUnlock(!isBlock, _id)
       .then(response => {
         const { data } = response;
-        if (response.status == 200) {
+        if (response.status === 200) {
           enqueueSnackbar((data.isBlock ? 'Blocked' : 'Unlock ') + data.email, {
             variant: 'success'
           });
