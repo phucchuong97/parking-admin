@@ -16,10 +16,16 @@ import {
   TableHead,
   TableRow,
   Typography,
-  TablePagination
+  TablePagination,
+  Button,
+  TableContainer
 } from '@material-ui/core';
-
+import DoneIcon from '@material-ui/icons/Done';
+import ClearIcon from '@material-ui/icons/Clear';
+import { useSnackbar } from 'notistack';
 import { getInitials } from 'helpers';
+import { ROLE } from '../../../../common/constant';
+import { blockUnlock } from '../../../../api/users';
 
 const useStyles = makeStyles(theme => ({
   root: {},
@@ -28,6 +34,9 @@ const useStyles = makeStyles(theme => ({
   },
   inner: {
     minWidth: 1050
+  },
+  container: {
+    maxHeight: 440
   },
   nameContainer: {
     display: 'flex',
@@ -42,21 +51,24 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const UsersTable = props => {
-  const { className, users, ...rest } = props;
+  const { className, data, pagination, ...rest } = props;
 
   const classes = useStyles();
+  const { enqueueSnackbar } = useSnackbar();
 
+  const [users, setUsers] = useState(data || []);
   const [selectedUsers, setSelectedUsers] = useState([]);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(pagination.limit);
   const [page, setPage] = useState(0);
 
   const handleSelectAll = event => {
-    const { users } = props;
-
+    const { data } = props;
+    console.log(data);
+    const users = data.users || [];
     let selectedUsers;
 
     if (event.target.checked) {
-      selectedUsers = users.map(user => user.id);
+      selectedUsers = users.map(user => user._id);
     } else {
       selectedUsers = [];
     }
@@ -92,15 +104,41 @@ const UsersTable = props => {
     setRowsPerPage(event.target.value);
   };
 
+  const updateUser = user => {
+    const index = users.findIndex(f => f._id == user._id);
+    users[index] = user;
+    setUsers(users.map(f => f));
+  };
+
+  const handleUnlockBlock = async (event, user) => {
+    event.preventDefault();
+    const { _id, isBlock } = user;
+    blockUnlock(!isBlock, _id)
+      .then(response => {
+        const { data } = response;
+        if (response.status == 200) {
+          enqueueSnackbar((data.isBlock ? 'Blocked' : 'Unlock ') + data.email, {
+            variant: 'success'
+          });
+        }
+        updateUser(data);
+      })
+      .catch(error => {
+        if (!error.response) {
+          enqueueSnackbar('Network error', { variant: 'error' });
+        } else {
+          console.log(error.response);
+          enqueueSnackbar(error.response.data.message, { variant: 'error' });
+        }
+      });
+  };
+
   return (
-    <Card
-      {...rest}
-      className={clsx(classes.root, className)}
-    >
+    <Card {...rest} className={clsx(classes.root, className)}>
       <CardContent className={classes.content}>
         <PerfectScrollbar>
-          <div className={classes.inner}>
-            <Table>
+          <TableContainer className={classes.container}>
+            <Table stickyHeader>
               <TableHead>
                 <TableRow>
                   <TableCell padding="checkbox">
@@ -114,11 +152,12 @@ const UsersTable = props => {
                       onChange={handleSelectAll}
                     />
                   </TableCell>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Email</TableCell>
-                  <TableCell>Location</TableCell>
-                  <TableCell>Phone</TableCell>
+                  <TableCell align="center">Email</TableCell>
+                  <TableCell>PhoneNumber</TableCell>
+                  <TableCell>Role</TableCell>
                   <TableCell>Registration date</TableCell>
+                  <TableCell>Activation</TableCell>
+                  <TableCell>Block/Unlock</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -126,14 +165,13 @@ const UsersTable = props => {
                   <TableRow
                     className={classes.tableRow}
                     hover
-                    key={user.id}
-                    selected={selectedUsers.indexOf(user.id) !== -1}
-                  >
+                    key={user._id}
+                    selected={selectedUsers.indexOf(user._id) !== -1}>
                     <TableCell padding="checkbox">
                       <Checkbox
-                        checked={selectedUsers.indexOf(user.id) !== -1}
+                        checked={selectedUsers.indexOf(user._id) !== -1}
                         color="primary"
-                        onChange={event => handleSelectOne(event, user.id)}
+                        onChange={event => handleSelectOne(event, user._id)}
                         value="true"
                       />
                     </TableCell>
@@ -141,27 +179,39 @@ const UsersTable = props => {
                       <div className={classes.nameContainer}>
                         <Avatar
                           className={classes.avatar}
-                          src={user.avatarUrl}
-                        >
-                          {getInitials(user.name)}
+                          src={user.avatar || '/images/avatars/avatar_3.png'}>
+                          {getInitials(user.email)}
                         </Avatar>
-                        <Typography variant="body1">{user.name}</Typography>
+                        <Typography variant="body1">{user.email}</Typography>
                       </div>
                     </TableCell>
-                    <TableCell>{user.email}</TableCell>
+                    <TableCell>{user.phoneNumber || ''}</TableCell>
+                    <TableCell>{ROLE[user.role]}</TableCell>
                     <TableCell>
-                      {user.address.city}, {user.address.state},{' '}
-                      {user.address.country}
+                      {user.createdAt
+                        ? moment(user.createdAt).format('DD/MM/YYYY')
+                        : ''}
                     </TableCell>
-                    <TableCell>{user.phone}</TableCell>
-                    <TableCell>
-                      {moment(user.createdAt).format('DD/MM/YYYY')}
+                    <TableCell align="center">
+                      {user.isActive ? (
+                        <DoneIcon color="secondary" />
+                      ) : (
+                        <ClearIcon color="error" />
+                      )}
+                    </TableCell>
+                    <TableCell align="center">
+                      <Button
+                        color="primary"
+                        onClick={e => handleUnlockBlock(e, user)}
+                        variant={user.isBlock ? 'outlined' : 'contained'}>
+                        {user.isBlock ? 'unclock' : 'block'}
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
-          </div>
+          </TableContainer>
         </PerfectScrollbar>
       </CardContent>
       <CardActions className={classes.actions}>
@@ -181,7 +231,8 @@ const UsersTable = props => {
 
 UsersTable.propTypes = {
   className: PropTypes.string,
-  users: PropTypes.array.isRequired
+  data: PropTypes.array.isRequired,
+  pagination: PropTypes.object.isRequired
 };
 
 export default UsersTable;

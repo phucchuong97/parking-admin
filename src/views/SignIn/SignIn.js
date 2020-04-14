@@ -7,7 +7,7 @@ import { useSnackbar } from 'notistack';
 
 import { Grid, Button, TextField, Typography } from '@material-ui/core';
 import { login } from '../../api/auth';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import * as actions from '../../redux/actions';
 
 const schema = {
@@ -168,14 +168,18 @@ const SignIn = props => {
           const { user } = response.data;
           props.isLogedIn();
           localStorage.setItem('user', JSON.stringify(user));
-          enqueueSnackbar('Welcome ' + user.email, {variant:'success'});
+          enqueueSnackbar('Welcome ' + user.email, { variant: 'success' });
           history.push('/dashboard');
         }
       })
       .catch(error => {
-        console.log(error)
-        const errResponse = error.response;
-        enqueueSnackbar(errResponse.data.message, {variant:'error'});
+        console.log(error);
+        if (!error.response) {
+          enqueueSnackbar('Network Error', { variant: 'error' });
+        } else {
+          const errResponse = error.response;
+          enqueueSnackbar(errResponse.data.message, { variant: 'error' });
+        }
       });
   };
 
@@ -233,10 +237,10 @@ const SignIn = props => {
                   color="primary"
                   disabled={!formState.isValid}
                   fullWidth
+                  onClick={handleChange}
                   size="large"
                   type="submit"
-                  variant="contained"
-                  onClick={handleChange}>
+                  variant="contained">
                   Sign in now
                 </Button>
               </form>
@@ -249,7 +253,8 @@ const SignIn = props => {
 };
 
 SignIn.propTypes = {
-  history: PropTypes.object
+  history: PropTypes.object,
+  isLogedIn: PropTypes.func
 };
 
 const mapStateToProps = state => ({
