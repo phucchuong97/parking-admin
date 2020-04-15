@@ -1,0 +1,10 @@
+version: "3.7"
+
+services:
+  app:
+    build:
+      context: .
+    image: parking_sharing_webadmin
+    ports:
+      - "5000:80"
+    restart: unless-stopped
