@@ -13,9 +13,16 @@ import {
   Link
 } from '@material-ui/core';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
+import { getDuringTimeFromNow } from '../../../../helpers/timeHelper';
 
 const useStyles = makeStyles(theme => ({
-  root: {},
+  root: {
+    cursor: 'pointer'
+  },
+  cardPadding: {
+    padding: 8,
+    paddingBottom: 0
+  },
   imageContainer: {
     height: 128,
     margin: '0 auto',
@@ -28,7 +35,7 @@ const useStyles = makeStyles(theme => ({
     marginBottom: 6
   },
   image: {
-    'background-size':'cover'
+    'background-size': 'cover'
   },
   statsItem: {
     display: 'flex',
@@ -42,65 +49,41 @@ const useStyles = makeStyles(theme => ({
 
 const ParkingCard = props => {
   const { className, parking, ...rest } = props;
-
   const classes = useStyles();
 
   return (
-    <Card
-      {...rest}
-      className={clsx(classes.root, className)}
-    >
-      <Link>
-        <CardContent>        
-          <div className={classes.imageContainer}>
-            <img
-              alt="parking"
-              className={classes.image}
-              src={parking.imageUrl}
-            />
-          </div>
-          <Typography
-            align="center"
-            variant="h6"
-          >
-            {parking.title}
-          </Typography>       
-        </CardContent>
-      </Link>
+    <Card {...rest} className={clsx(classes.root, className)}>
+      <CardContent className={classes.cardPadding}>
+        <div className={classes.imageContainer}>
+          <img
+            alt="parking"
+            className={classes.image}
+            src={
+              parking.image ||
+              'https://d27p8o2qkwv41j.cloudfront.net/wp-content/uploads/2017/10/shutterstock_521926666-e1508347182482.jpg'
+            }
+          />
+        </div>
+        <Typography align="center" variant="h6">
+          {parking.name}
+        </Typography>
+      </CardContent>
       <Divider />
       <CardActions>
-        <Grid
-          container
-          justify="space-between"
-        >
-          <Grid
-            className={classes.statsItem}
-            item
-          >
+        <Grid container justify="space-between">
+          <Grid className={classes.statsItem} item>
             <AccessTimeIcon className={classes.statsIcon} />
-            <Typography
-              display="inline"
-              variant="body2"
-            >
-              2hr ago
+            <Typography display="inline" variant="body2">
+              {getDuringTimeFromNow(parking.createdAt)}
             </Typography>
           </Grid>
-          <Grid
-            className={classes.statsItem}
-            item
-          >
-            <Button
-              color="success"
-              variant="outlined"
-            > 
+          <Grid className={classes.statsItem} item>
+            <Button color="primary" variant="outlined">
               Hide
             </Button>
-            
-            <Button
-              color="primary"
-              variant="outlined"
-            > 
-              Approve 
+
+            <Button color="primary" variant="contained">
+              Approve
             </Button>
           </Grid>
         </Grid>

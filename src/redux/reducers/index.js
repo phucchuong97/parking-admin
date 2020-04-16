@@ -1,6 +1,8 @@
-import {combineReducers} from 'redux';
+import { combineReducers } from 'redux';
 import loginReducer from './loginReducer';
+import parkingReducer from './parkingReducer';
 
 export default combineReducers({
-  loginStatus:loginReducer
+  checkAuth:loginReducer,
+  parking: parkingReducer
 });

@@ -1,2 +1,4 @@
-export const IS_AUTH = 'auth';
-export const IS_NOT_AUTH = 'notauth';
+export const AUTH = 'AUTH';
+export const PARKING_LOADING = 'PARKING_LOADING';
+export const PARKING_FETCH_ERROR = 'PARKING_FETCH_ERROR';
+export const PARKING_FETCH_SUCCESS = 'PARKING_FETCH_SUCCESS';
