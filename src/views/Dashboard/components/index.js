@@ -1,4 +1,4 @@
-export { default as Budget } from './Budget';
+export { default as TotalParking } from './TotalParking';
 export { default as LatestParkingRegisters } from './LatestParkingRegisters';
 export { default as LatestBookings } from './LatestBookings';
 export { default as LatestSales } from './LatestSales';

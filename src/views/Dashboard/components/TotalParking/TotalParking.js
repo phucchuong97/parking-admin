@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import { Card, CardContent, Grid, Typography, Avatar } from '@material-ui/core';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
-import MoneyIcon from '@material-ui/icons/Money';
+import LocalParkingRoundedIcon from '@material-ui/icons/LocalParkingRounded';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -40,50 +40,37 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const Budget = props => {
-  const { className, ...rest } = props;
+const TotalParking = props => {
+  const { className, parkingNum, ...rest } = props;
 
   const classes = useStyles();
 
   return (
-    <Card
-      {...rest}
-      className={clsx(classes.root, className)}
-    >
+    <Card {...rest} className={clsx(classes.root, className)}>
       <CardContent>
-        <Grid
-          container
-          justify="space-between"
-        >
+        <Grid container justify="space-between">
           <Grid item>
             <Typography
               className={classes.title}
               color="textSecondary"
               gutterBottom
-              variant="body2"
-            >
-              BUDGET
+              variant="body2">
+              TOTAL PARKING
             </Typography>
-            <Typography variant="h3">$24,000</Typography>
+            <Typography variant="h3">{parkingNum}</Typography>
           </Grid>
           <Grid item>
             <Avatar className={classes.avatar}>
-              <MoneyIcon className={classes.icon} />
+              <LocalParkingRoundedIcon className={classes.icon} />
             </Avatar>
           </Grid>
         </Grid>
         <div className={classes.difference}>
           <ArrowDownwardIcon className={classes.differenceIcon} />
-          <Typography
-            className={classes.differenceValue}
-            variant="body2"
-          >
+          <Typography className={classes.differenceValue} variant="body2">
             12%
           </Typography>
-          <Typography
-            className={classes.caption}
-            variant="caption"
-          >
+          <Typography className={classes.caption} variant="caption">
             Since last month
           </Typography>
         </div>
@@ -92,8 +79,9 @@ const Budget = props => {
   );
 };
 
-Budget.propTypes = {
-  className: PropTypes.string
+TotalParking.propTypes = {
+  className: PropTypes.string,
+  parkingNum: PropTypes.number
 };
 
-export default Budget;
+export default TotalParking;

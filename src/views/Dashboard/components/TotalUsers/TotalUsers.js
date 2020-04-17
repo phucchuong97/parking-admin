@@ -41,30 +41,23 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const TotalUsers = props => {
-  const { className, ...rest } = props;
+  const { className, userNum, ...rest } = props;
 
   const classes = useStyles();
 
   return (
-    <Card
-      {...rest}
-      className={clsx(classes.root, className)}
-    >
+    <Card {...rest} className={clsx(classes.root, className)}>
       <CardContent>
-        <Grid
-          container
-          justify="space-between"
-        >
+        <Grid container justify="space-between">
           <Grid item>
             <Typography
               className={classes.title}
               color="textSecondary"
               gutterBottom
-              variant="body2"
-            >
+              variant="body2">
               TOTAL USERS
             </Typography>
-            <Typography variant="h3">1,600</Typography>
+            <Typography variant="h3">{userNum}</Typography>
           </Grid>
           <Grid item>
             <Avatar className={classes.avatar}>
@@ -74,16 +67,10 @@ const TotalUsers = props => {
         </Grid>
         <div className={classes.difference}>
           <ArrowUpwardIcon className={classes.differenceIcon} />
-          <Typography
-            className={classes.differenceValue}
-            variant="body2"
-          >
+          <Typography className={classes.differenceValue} variant="body2">
             16%
           </Typography>
-          <Typography
-            className={classes.caption}
-            variant="caption"
-          >
+          <Typography className={classes.caption} variant="caption">
             Since last month
           </Typography>
         </div>
@@ -93,7 +80,8 @@ const TotalUsers = props => {
 };
 
 TotalUsers.propTypes = {
-  className: PropTypes.string
+  className: PropTypes.string,
+  userNum: PropTypes.number
 };
 
 export default TotalUsers;
