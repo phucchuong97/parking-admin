@@ -3,6 +3,10 @@ import {
   PARKING_LOADING,
   PARKING_FETCH_ERROR,
   PARKING_FETCH_SUCCESS,
+  PARKING_CHANGE_STATUS,
+  PARKING_CHANGE_OFFSET,
+  PARKING_CHANGE_LIMIT,
+  PARKING_CHANGE_TOTAL,
   PARKING_CHANGING,
   PARKING_CHANGE_ERROR,
   PARKING_CHANGE_SUCCESS,
@@ -12,6 +16,7 @@ import {
 } from './type';
 import { getList, changeStatus } from '../../api/parking';
 import { getUserParkingNum } from '../../api/statistics';
+import store from '../store';
 
 export const logedIn = bool => ({ type: AUTH, isAuth: bool });
 
@@ -27,10 +32,14 @@ export const parkingGetListSuccessfully = parking => ({
   type: PARKING_FETCH_SUCCESS,
   payload: parking
 });
-export const parkingGetList = () => {
+export const parkingparkingTotal = total => ({
+  type: PARKING_CHANGE_TOTAL,
+  payload: total
+});
+export const parkingGetList = (offset, status, limit) => {
   return dispatch => {
     dispatch(parkingIsLoading(true));
-    getList()
+    getList(offset, status, limit)
       .then(response => {
         dispatch(parkingIsLoading(false));
         if (response.status !== 200) {
@@ -40,6 +49,7 @@ export const parkingGetList = () => {
       })
       .then(response => {
         dispatch(parkingGetListSuccessfully(response.data.parking));
+        dispatch(parkingparkingTotal(response.data.total));
       })
       .catch(error => {
         let message = '';
@@ -52,6 +62,24 @@ export const parkingGetList = () => {
       });
   };
 };
+const parkingStatusChange = status => ({
+  type: PARKING_CHANGE_STATUS,
+  payload: status
+});
+export const parkingselectedStatus = status =>{
+  return dispatch=>{
+    dispatch(parkingStatusChange(status));
+    dispatch(parkingselectedOffset(0));
+  }
+}
+export const parkingselectedOffset = offset => ({
+  type: PARKING_CHANGE_OFFSET,
+  payload: offset
+});
+export const parkingselectedLimit = limit => ({
+  type: PARKING_CHANGE_LIMIT,
+  payload: limit
+});
 
 export const parkingChanging = bool => ({
   type: PARKING_CHANGING,
@@ -78,7 +106,8 @@ export const parkingChangeStatus = (status, parkingID) => {
       })
       .then(response => {
         dispatch(parkingChangeStatusSuccessfully(response.data));
-        dispatch(parkingGetList());
+        const { status, limit, offset } = store.getState().parking;
+        dispatch(parkingGetList(offset, status, limit));
       })
       .catch(error => {
         let message = '';

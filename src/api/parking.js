@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { SERVER } from '../common/constant';
+import { STATUS } from '../common/constant';
 const ROUTE = {
   LIST_PARKING: 'api/admin/parking',
   PARKING: 'api/admin/parking/',
@@ -13,9 +14,14 @@ const setToken = () => {
   axios.defaults.headers.common['Authorization'] = token;
 };
 
-const getList = () => {
+const getList = (offset, status, limit) => {
   setToken();
-  const URL = SERVER + ROUTE.LIST_PARKING;
+  let URL = SERVER + ROUTE.LIST_PARKING;
+  URL += '?offset=' + offset;
+  URL += '&limit=' + limit;
+  if (status !== STATUS.ALL) {
+    URL += '&status=' + status;
+  }
   return axios.get(URL);
 };
 

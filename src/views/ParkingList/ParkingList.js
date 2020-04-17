@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import { ParkingToolbar, ParkingCard } from './components';
 import { useSnackbar } from 'notistack';
 import { connect } from 'react-redux';
-import { parkingGetList } from '../../redux/actions';
+import { parkingGetList, parkingselectedOffset } from '../../redux/actions';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 const useStyles = makeStyles(theme => ({
@@ -39,8 +39,12 @@ const ParkingList = props => {
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
-    props.fetchParkingList();
-  }, []);
+    props.fetchParkingList(props.offset, props.status, props.limit);
+  }, [props.status, props.offset]);
+  useEffect(() => {}, []);
+  const handleChangePage = offset => {
+    props.changePage(offset);
+  };
 
   return (
     <div className={classes.root}>
@@ -62,37 +66,62 @@ const ParkingList = props => {
           )}
         </Grid>
       </div>
-      <div className={classes.pagination}>
-        <Typography variant="caption">1-6 of 20</Typography>
-        <IconButton>
-          <ChevronLeftIcon />
-        </IconButton>
-        <IconButton>
-          <ChevronRightIcon />
-        </IconButton>
-      </div>
+      {props.loading ? (
+        ''
+      ) : (
+        <div className={classes.pagination}>
+          <Typography variant="h5">
+            {props.offset + 1}-
+            {props.offset + props.limit < props.total
+              ? props.offset + props.limit
+              : props.total}{' '}
+            of {props.total}
+          </Typography>
+          <IconButton
+            disabled={props.offset - props.limit <= 0}
+            onClick={() => handleChangePage(props.offset - props.limit)}>
+            <ChevronLeftIcon />
+          </IconButton>
+          <IconButton
+            disabled={props.offset + props.limit >= props.total}
+            onClick={() => handleChangePage(props.offset + props.limit)}>
+            <ChevronRightIcon />
+          </IconButton>
+        </div>
+      )}
     </div>
   );
 };
 
 ParkingList.propTypes = {
+  changePage: PropTypes.func,
   errorMessage: PropTypes.string,
   fetchParkingList: PropTypes.func,
+  limit: PropTypes.number,
   loading: PropTypes.bool,
-  parkingData: PropTypes.array
+  offset: PropTypes.number,
+  parkingData: PropTypes.array,
+  status: PropTypes.number,
+  total: PropTypes.number
 };
 
 const mapStateToProps = state => {
   return {
     parkingData: state.parking.data,
     errorMessage: state.parking.message,
-    loading: state.parking.loading
+    limit: state.parking.limit,
+    loading: state.parking.loading,
+    total: state.parking.total,
+    offset: state.parking.offset,
+    status: state.parking.status
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchParkingList: () => dispatch(parkingGetList())
+    fetchParkingList: (offset, status, limit) =>
+      dispatch(parkingGetList(offset, status, limit)),
+    changePage: offset => dispatch(parkingselectedOffset(offset))
   };
 };
 

@@ -63,10 +63,6 @@ const ParkingCard = props => {
 
   props.errorMessage &&
     enqueueSnackbar(props.errorMessage, { variant: 'error' });
-  !props.changing &&
-    !props.errorMessage &&
-    props.parkingData.status &&
-    enqueueSnackbar('success', { variant: 'success' });
 
   const handleOpen = bool => {
     setOpenParkingDetail(bool);
