@@ -16,7 +16,7 @@ import {
 import { getDuringTimeFromNow } from '../../../../helpers/timeHelper';
 import { makeStyles } from '@material-ui/styles';
 //import GoogleMapReact from 'google-map-react';
-//import { MAP_KEY, STATUS } from '../../../../common/constant';
+import { /*MAP_KEY,*/ STATUS } from '../../../../common/constant';
 import { parkingChangeStatus } from '../../../../redux/actions';
 import { connect } from 'react-redux';
 
@@ -72,9 +72,8 @@ const useStyles = makeStyles(theme => ({
 const ParkingDetail = props => {
   const { parking } = props;
   const classes = useStyles();
-  const { location } = parking;
-
-  const AnyReactComponent = ({ text }) => <div>{text}</div>;
+  //const { location } = parking;
+  //const AnyReactComponent = ({ text }) => <div>{text}</div>;
   return (
     <div className={classes.modal}>
       <Card>
@@ -223,7 +222,9 @@ const ParkingDetail = props => {
 };
 
 ParkingDetail.propTypes = {
-  parking: PropTypes.object
+  open: PropTypes.func,
+  parking: PropTypes.object,
+  parkingChangeStatus: PropTypes.func
 };
 
 const mapStateToProps = state => {

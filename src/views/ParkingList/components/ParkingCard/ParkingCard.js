@@ -20,6 +20,7 @@ import ParkingDetail from '../ParkingDetail';
 import { parkingChangeStatus } from '../../../../redux/actions';
 import { connect } from 'react-redux';
 import { STATUS } from '../../../../common/constant';
+import { useSnackbar } from 'notistack';
 
 const useStyles = makeStyles(theme => ({
   root: {},
@@ -58,6 +59,14 @@ const ParkingCard = props => {
   const { className, parking } = props;
   const classes = useStyles();
   const [openParkingDetail, setOpenParkingDetail] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
+
+  props.errorMessage &&
+    enqueueSnackbar(props.errorMessage, { variant: 'error' });
+  !props.changing &&
+    !props.errorMessage &&
+    props.parkingData.status &&
+    enqueueSnackbar('success', { variant: 'success' });
 
   const handleOpen = bool => {
     setOpenParkingDetail(bool);
@@ -184,8 +193,12 @@ const ParkingCard = props => {
 };
 
 ParkingCard.propTypes = {
+  changing: PropTypes.bool,
   className: PropTypes.string,
-  parking: PropTypes.object.isRequired
+  errorMessage: PropTypes.string,
+  parking: PropTypes.object.isRequired,
+  parkingChangeStatus: PropTypes.func,
+  parkingData: PropTypes.object
 };
 
 const mapStateToProps = state => {
