@@ -14,7 +14,7 @@ import { SnackbarProvider } from 'notistack';
 import { isAuth } from './api/auth';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { connect } from 'react-redux';
-import * as actions from './redux/actions';
+import { logedIn } from './redux/actions';
 
 const browserHistory = createBrowserHistory();
 Chart.helpers.extend(Chart.elements.Rectangle.prototype, {
@@ -47,19 +47,19 @@ class App extends Component {
     const isLogin = await isAuth();
     this.setState({ isReady: true });
     isLogin &&
-      (await this.props.isLogedIn()) &&
-      browserHistory.push('/dashboard');
+      (await this.props.logedIn(true)) &&
+      browserHistory.push('/parkings');
   }
 
   render() {
     return this.state.isReady ? (
       <ThemeProvider theme={theme}>
         <SnackbarProvider
-          preventDuplicate
           anchorOrigin={{
             vertical: 'bottom',
             horizontal: 'right'
-          }}>
+          }}
+          preventDuplicate>
           <Router history={browserHistory}>
             <Routes />
           </Router>
@@ -73,4 +73,4 @@ class App extends Component {
   }
 }
 
-export default connect(null, actions)(App);
+export default connect(null, { logedIn })(App);

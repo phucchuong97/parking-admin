@@ -15,7 +15,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import NotificationsIcon from '@material-ui/icons/NotificationsOutlined';
 import InputIcon from '@material-ui/icons/Input';
 import { connect } from 'react-redux';
-import * as actions from '../../../../redux/actions';
+import { logedIn } from '../../../../redux/actions';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -42,7 +42,7 @@ const Topbar = props => {
 
   const logout = () => {
     localStorage.removeItem('user');
-    props.isLogedOut();
+    props.logedIn(false);
   };
 
   return (
@@ -86,7 +86,8 @@ const Topbar = props => {
 Topbar.propTypes = {
   className: PropTypes.string,
   isLogedOut: PropTypes.func,
+  logedIn: PropTypes.func,
   onSidebarOpen: PropTypes.func
 };
 
-export default connect(null, actions)(Topbar);
+export default connect(null, { logedIn })(Topbar);

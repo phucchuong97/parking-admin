@@ -8,7 +8,7 @@ import { useSnackbar } from 'notistack';
 import { Grid, Button, TextField, Typography } from '@material-ui/core';
 import { login } from '../../api/auth';
 import { connect } from 'react-redux';
-import * as actions from '../../redux/actions';
+import { logedIn } from '../../redux/actions';
 
 const schema = {
   email: {
@@ -166,7 +166,7 @@ const SignIn = props => {
       .then(response => {
         if (response.status === 200) {
           const { user } = response.data;
-          props.isLogedIn();
+          props.logedIn(true);
           localStorage.setItem('user', JSON.stringify(user));
           enqueueSnackbar('Welcome ' + user.email, { variant: 'success' });
           history.push('/dashboard');
@@ -254,11 +254,7 @@ const SignIn = props => {
 
 SignIn.propTypes = {
   history: PropTypes.object,
-  isLogedIn: PropTypes.func
+  logedIn: PropTypes.func
 };
 
-const mapStateToProps = state => ({
-  isAuth: state.loginStatus
-});
-
-export default connect(mapStateToProps, actions)(withRouter(SignIn));
+export default connect(null, { logedIn })(withRouter(SignIn));

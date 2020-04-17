@@ -1,33 +1,32 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/styles';
 import {
-  Card,
-  CardContent,
-  CardActions,
   Typography,
   Grid,
   Divider,
   Button,
-  Modal,
+  Avatar,
+  Card,
   CardHeader,
-  Avatar
+  CardContent,
+  CardActions
 } from '@material-ui/core';
 //import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import { getDuringTimeFromNow } from '../../../../helpers/timeHelper';
-import ParkingDetail from '../ParkingDetail';
+import { makeStyles } from '@material-ui/styles';
+//import GoogleMapReact from 'google-map-react';
+import { MAP_KEY, STATUS } from '../../../../common/constant';
 import { parkingChangeStatus } from '../../../../redux/actions';
 import { connect } from 'react-redux';
-import { STATUS } from '../../../../common/constant';
 
 const useStyles = makeStyles(theme => ({
   root: {},
   cardPadding: {
-    padding: 8
+    padding: 6
   },
   imageContainer: {
-    height: 128,
+    height: 300,
     margin: '0 auto',
     border: `1px solid ${theme.palette.divider}`,
     borderRadius: '5px',
@@ -51,28 +50,39 @@ const useStyles = makeStyles(theme => ({
   cardAction: {
     display: 'block',
     textAlign: 'initial'
+  },
+  modal: {
+    position: 'absolute',
+    width: 800,
+    height: 600,
+    backgroundColor: theme.palette.background.paper,
+    border: '2px solid #000',
+    boxShadow: theme.shadows[5],
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    overflow: 'scroll'
+  },
+  avatar: {
+    width: 60,
+    height: 60
   }
 }));
 
-const ParkingCard = props => {
-  const { className, parking } = props;
+const ParkingDetail = props => {
+  const { parking } = props;
   const classes = useStyles();
-  const [openParkingDetail, setOpenParkingDetail] = useState(false);
+  const { location } = parking;
 
-  const handleOpen = bool => {
-    setOpenParkingDetail(bool);
-  };
-
+  const AnyReactComponent = ({ text }) => <div>{text}</div>;
   return (
-    <>
-      <Card className={clsx(classes.root, className)}>
+    <div className={classes.modal}>
+      <Card>
         <CardHeader
           action={
-            <>
-              <Button onClick={() => handleOpen(true)} variant="outlined">
-                Detail
-              </Button>{' '}
-            </>
+            <Button onClick={() => props.open(false)} variant="outlined">
+              Close
+            </Button>
           }
           avatar={
             <Avatar
@@ -85,6 +95,9 @@ const ParkingCard = props => {
           title={parking.userID.email}
         />
         <CardContent className={clsx(classes.cardPadding)}>
+          <Typography align="center" variant="h6">
+            {parking.name}
+          </Typography>
           <div className={classes.imageContainer}>
             <img
               alt="parking"
@@ -95,13 +108,42 @@ const ParkingCard = props => {
               }
             />
           </div>
-          <Typography align="center" variant="h6" alignItems="center">
-            {parking.name}
-          </Typography>
+          <Typography>Description: {parking.description}</Typography>
+          <Typography>Address: {parking.street}</Typography>
+          <Typography>Capacity: {parking.capacity}</Typography>
+
+          {/*<div style={{ height: '200px', width: '50%' }}>
+            <GoogleMapReact
+              bootstrapURLKeys={{ key: MAP_KEY }}
+              defaultCenter={{
+                center: {
+                  lat: location.latitude,
+                  lng: location.longitude
+                }
+              }}
+              defaultZoom={10}
+              yesIWantToUseGoogleMapApiInternals>
+              <AnyReactComponent
+                lat={location.latitude}
+                lng={location.longitude}
+                text={parking.name}
+              />
+            </GoogleMapReact>
+            </div>*/}
         </CardContent>
         <Divider />
         {parking.status === STATUS.CANCELED ? (
-          ''
+          <CardActions>
+            <Grid container justify="space-between">
+              <Grid>
+                <Button
+                  onClick={() => console.log('delete')}
+                  variant="outlined">
+                  Delete
+                </Button>
+              </Grid>
+            </Grid>
+          </CardActions>
         ) : parking.status === STATUS.PENDING ? (
           <CardActions>
             <Grid container justify="space-between">
@@ -176,16 +218,12 @@ const ParkingCard = props => {
           </CardActions>
         )}
       </Card>
-      <Modal onClose={() => handleOpen(false)} open={openParkingDetail}>
-        {<ParkingDetail open={handleOpen} parking={parking} />}
-      </Modal>
-    </>
+    </div>
   );
 };
 
-ParkingCard.propTypes = {
-  className: PropTypes.string,
-  parking: PropTypes.object.isRequired
+ParkingDetail.propTypes = {
+  parking: PropTypes.object
 };
 
 const mapStateToProps = state => {
@@ -203,4 +241,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ParkingCard);
+export default connect(mapStateToProps, mapDispatchToProps)(ParkingDetail);
