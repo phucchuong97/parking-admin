@@ -1,32 +1,32 @@
 import {
-  PARKING_CHANGING,
-  PARKING_CHANGE_ERROR,
-  PARKING_CHANGE_SUCCESS
+  PARKING_LOADING,
+  PARKING_FETCH_ERROR,
+  PARKING_FETCH_SUCCESS
 } from '../actions/type';
 
 const parkingInitState = {
-  changing: false,
-  data: {},
+  loading: false,
+  data: [],
   message: ''
 };
 
 export default function(state = parkingInitState, action) {
   switch (action.type) {
-    case PARKING_CHANGING:
+    case PARKING_LOADING:
       return {
         ...state,
-        changing: action.payload
+        loading: action.payload
       };
-    case PARKING_CHANGE_ERROR:
+    case PARKING_FETCH_ERROR:
       return {
-        data: {},
-        changing: false,
+        data: [],
+        loading: false,
         message: action.payload
       };
-    case PARKING_CHANGE_SUCCESS:
+    case PARKING_FETCH_SUCCESS:
       return {
         data: action.payload,
-        changing: false,
+        loading: false,
         message: ''
       };
 

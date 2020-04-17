@@ -19,11 +19,11 @@ const getList = () => {
   return axios.get(URL);
 };
 
-const approve = (status, parkingID) => {
+const changeStatus = (status, parkingID) => {
   setToken();
   const URL = SERVER + ROUTE.PARKING + parkingID;
   return axios.put(URL, {
-    isBlock: status
+    status
   });
 };
 
@@ -33,4 +33,4 @@ const remove = parkingID => {
   return axios.delete(URL);
 };
 
-export { getList, approve, remove };
+export { getList, changeStatus, remove };
