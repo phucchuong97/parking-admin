@@ -1,6 +1,11 @@
 import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/styles';
-import { IconButton, Grid, Typography } from '@material-ui/core';
+import {
+  IconButton,
+  Grid,
+  Typography,
+  LinearProgress
+} from '@material-ui/core';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import PropTypes from 'prop-types';
@@ -25,25 +30,31 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'flex-end'
   },
   progress: {
-    position: 'relative',
-    top: '50%',
-    left: '50%',
-    marginLeft: '-50px',
-    width: '100px',
-    height: '100px'
+    width: '100%',
+    '& > * + *': {
+      marginTop: theme.spacing(2),
+    },
   }
 }));
 
 const ParkingList = props => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
+  const {
+    status,
+    offset,
+    limit,
+    fetchParkingList,
+    loading,
+    total,
+    changePage
+  } = props;
 
   useEffect(() => {
-    props.fetchParkingList(props.offset, props.status, props.limit);
-  }, [props.status, props.offset]);
-  useEffect(() => {}, []);
+    fetchParkingList(offset, status, limit);
+  }, [status, offset, limit]);
   const handleChangePage = offset => {
-    props.changePage(offset);
+    changePage(offset);
   };
 
   return (
@@ -55,7 +66,7 @@ const ParkingList = props => {
         <Grid container spacing={2}>
           {props.loading ? (
             <div className={classes.progress}>
-              <CircularProgress />
+              <LinearProgress />
             </div>
           ) : (
             props.parkingData.map(p => (
@@ -66,25 +77,22 @@ const ParkingList = props => {
           )}
         </Grid>
       </div>
-      {props.loading ? (
+      {loading ? (
         ''
       ) : (
         <div className={classes.pagination}>
           <Typography variant="h5">
-            {props.offset + 1}-
-            {props.offset + props.limit < props.total
-              ? props.offset + props.limit
-              : props.total}{' '}
-            of {props.total}
+            {offset + 1}-{offset + limit < total ? offset + limit : total} of{' '}
+            {total}
           </Typography>
           <IconButton
-            disabled={props.offset - props.limit <= 0}
-            onClick={() => handleChangePage(props.offset - props.limit)}>
+            disabled={offset - limit <= 0}
+            onClick={() => handleChangePage(offset - limit)}>
             <ChevronLeftIcon />
           </IconButton>
           <IconButton
-            disabled={props.offset + props.limit >= props.total}
-            onClick={() => handleChangePage(props.offset + props.limit)}>
+            disabled={offset + limit >= total}
+            onClick={() => handleChangePage(offset + limit)}>
             <ChevronRightIcon />
           </IconButton>
         </div>

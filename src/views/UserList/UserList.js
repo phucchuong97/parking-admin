@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/styles';
 
 import { UsersToolbar, UsersTable } from './components';
 import { getListUser } from '../../api/users';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -13,12 +13,10 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(2)
   },
   progress: {
-    position: 'relative',
-    top: '50%',
-    left: '50%',
-    marginLeft: '-50px',
-    width: '100px',
-    height: '100px'
+    width: '100%',
+    '& > * + *': {
+      marginTop: theme.spacing(2),
+    },
   }
 }));
 
@@ -49,7 +47,7 @@ const UserList = () => {
       <div className={classes.content}>
         {isLoading ? (
           <div className={classes.progress}>
-            <CircularProgress />
+            <LinearProgress />
           </div>
         ) : (
           <UsersTable
